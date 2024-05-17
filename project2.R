@@ -30,12 +30,17 @@ node_info <- dataset %>%
     'Average Highway' = mean(hwyMPG),
     'Average' = (mean(cityMPG)+mean(hwyMPG))/2)
 
+#node info csv for gephi
+write.csv(node_info,"node_info.csv", row.names = FALSE)
+
 #stole from online to get the most common element of a vector
 getmode <- function(v) {
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
+#filter out engine==0 since there are 12000 of them out of 46000
+#most likely signifies a lack of actual engine ID
 engine_by_make <- dataset %>% 
   select(make, engine) %>% 
   filter(engine!=0) %>% 
@@ -43,11 +48,11 @@ engine_by_make <- dataset %>%
   reframe(
     'Engine' = unique(engine))
 
-#create make x engine matrix where we store 1 for every engine type used by that make
-make_x_engine <- matrix(0, nrow = 2765, ncol = 144, byrow = FALSE)
+#add columns for the numeric of the factors (will be used in python)
+engine_by_make <- engine_by_make %>% 
+  mutate('MakeID'=as.numeric(make))
+engine_by_make <- engine_by_make %>% 
+  mutate('EngineID'=as.numeric(Engine))
 
-for (i in 1:nrow(engine_by_make)){
-  i_make <- engine_by_make[i,1]
-  i_engine <- engine_by_make[i,2]
-  make_x_engine[i_make, i_engine]
-}
+#create csv for further processing in python
+write.csv(engine_by_make,"engine_by_make.csv", row.names = FALSE)
