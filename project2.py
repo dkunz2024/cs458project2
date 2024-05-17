@@ -37,6 +37,7 @@ def create_make_make_matrix(x):
             for i2 in range(i1+1, NUM_COLS):
                 if(x[i1, j]==1 and x[i2, j]==1):
                     a[i1, i2] = 1
+                    a[i2, i1] = 1
     return a
 
 def write_matrix_to_csv(a):
@@ -46,6 +47,6 @@ def write_matrix_to_csv(a):
         for i in range(NUM_COLS):
             for j in range(i, NUM_COLS):
                 if(a[i,j]==1):
-                    cf.writerow([i+1, j+1, 1])
+                    cf.writerow([i, j, 1])
 
 main()
